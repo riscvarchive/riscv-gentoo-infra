@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while true
+do
+        ifconfig eth0 down
+        ifconfig eth0 up
+        ifconfig eth0 10.0.2.15
+	route add default gw 10.0.2.2
+        sleep 1s
+done

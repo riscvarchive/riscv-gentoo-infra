@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source /etc/profile
+env-update
+
+ifconfig lo up
+ifconfig lo 127.0.0.1
+
+/bin/keepnetup &
+
+exec /bin/bash -l

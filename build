@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# Here are some configuration variables
+RISCV_GENTOO="git://github.com/palmer-dabbelt/riscv-gentoo.git"
+
+RISCV_LINUX="git://github.com/ucb-bar/riscv-linux.git"
+LINUX_TARBALL="https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.14.15.tar.xz"
+
+set -ex
+
+# This is going to use crossdev to bring up the cross compiler, which
+# is only going to work if we're on a native Gentoo machine.
+which crossdev >& /dev/null
+if [[ "$?" != "0" ]]
+then
+    echo "crossdev not installed"
+    exit 1
+fi
+
+# Cleans out the existing crossdev toolchain
+yes | crossdev -C riscv64-unknown-linux-gnu
+rm -rf /usr/local/portage/cross-riscv64-unknown-linux-gnu/
+
+# Cleans out the existing set of generated files
+rm -rf generated
+mkdir -p generated
+
+# Creates a new temporary directory where we're going to do all our
+# work.  Note that this has to be readable by everyone because portage
+# is going to use some other user to bring this up.
+mkdir -p workdir
+tempdir="$(pwd)"/workdir
+export tempdir
+chmod og+rX -R $tempdir
+
+# Clones the RISC-V overlay to get a copy of the relevant toolchain
+# files so they can be built.
+git clone $RISCV_GENTOO $tempdir/riscv
+chmod og+rX -R $tempdir/riscv
+
+# Builds a cross compiler,
+crossdev -t riscv64-unknown-linux-gnu \
+    --ov-output /usr/local/portage/ \
+    --binutils ~2.25 --ov-binutils $tempdir/riscv \
+    --kernel ~3.14 --ov-kernel $tempdir/riscv \
+    --gcc ~4.9.2 --ov-gcc $tempdir/riscv \
+    --libc ~2.20 --ov-libc $tempdir/riscv
+
+# Adds some stuff the the cross make.conf in order to actually allow
+# my code to build.
+cat >> /usr/riscv64-unknown-linux-gnu/etc/portage/make.conf <<EOF
+PORTDIR_OVERLAY="\$PORTDIR_OVERLAY $tempdir/riscv"
+PORTAGE_TEMPDIR="/var/tmp/riscv64-unknown-linux-gnu-portage/"
+PYTHON_TARGETS="python2_7"
+MAKEOPTS="-j8"
+EOF
+
+# Set up the profile to point into this new cross toolchain
+rm /usr/riscv64-unknown-linux-gnu/etc/portage/make.profile
+ln -s $tempdir/riscv/profiles/default/linux/riscv \
+   /usr/riscv64-unknown-linux-gnu/etc/portage/make.profile
+
+# Build a "cross stage3", which isn't actually a proper stage3 but
+# does have roughly enough stuff to bring up portage on the RISC-V
+# QEMU target
+riscv64-unknown-linux-gnu-emerge -vu @system
+
+# Generates a temporary disk image used for building a native RISC-V
+# stage3.
+dd if=/dev/zero of=generated/scratch.img bs=1M count=1 seek=40960
+/sbin/mkfs.ext4 -F generated/scratch.img
+
+mkdir $tempdir/scratch
+mount -o loop -t ext4 generated/scratch.img $tempdir/scratch
+trap "umount $tempdir/scratch" EXIT
+
+# Copies over the cross-compiled stage3 to give us something to
+# bootstrap into.
+tar -C /usr/riscv64-unknown-linux-gnu -c . | tar -C $tempdir/scratch -xv
+
+# Copies over the relevant portage files so we can actually go ahead
+# and start building things when we end up in the native QEMU boot
+tar -C / -c /usr/portage | tar -C $tempdir/scratch -xv
+
+mkdir -p $tempdir/scratch/usr/local/portage
+tar -C $tempdir/riscv -c . | tar -C $tempdir/scratch/usr/local/portage -xv
+
+# Since we've been coping a whole bunch of stuff from the local
+# machine, we need to go ahead and make sure all the group information
+# copies over properly.
+cat >$tempdir/root-files <<EOF
+/etc/passwd
+/etc/shadow
+/etc/group
+EOF
+
+tar -C / -T $tempdir/root-files -c | tar -C $tempdir/scratch -xv
+
+# There are some configuration files that really need to have been
+# manually written.
+tar -C rootfs-overlays/generate-stage3 -c . | tar -C $tempdir/scratch -xv
+
+umount $tempdir/scratch
+trap "" EXIT
+
+# Demonstrate to Linux how we're going to be building the initramfs,
+# which really just consists of sticking an absolute path in there
+# somewhere...
+cat rootfs-overlays/initramfs/initrd.conf | \
+    ./scripts/sed_vars > $tempdir/initrd.conf
+
+# Now that we've got the whole cross system up, it's time to go and
+# build a kernel and initrammfs that we can use to boot into Gentoo
+# and rebuild the stage3 manually.
+git clone $RISCV_LINUX $tempdir/linux -b qemu
+curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
+
+# Start with the default QEMU configuration
+make -C $tempdir/linux ARCH=riscv qemu_defconfig
+
+# Patch the QEMU config to have some extra stuff that's needed for
+# Gentoo to boot.
+cat patches/linux/config | ./scripts/sed_vars >> $tempdir/linux/.config
+make -C $tempdir/linux ARCH=riscv olddefconfig
+
+# Actually build Linux
+make -C $tempdir/linux ARCH=riscv -j8
+
+cp $tempdir/linux/vmlinux generated/vmlinux
+
+# 

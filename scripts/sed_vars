@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Produces on stdout a new version of stdin with @@TOP@@ replaced with
+# `pwd`.
+cat | \
+    sed s!@@TOP@@!`pwd`!g | \
+    sed s!@@TEMPDIR@@!$tempdir!g
