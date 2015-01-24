@@ -18,9 +18,12 @@ mount -t proc none /mnt/proc
 mount -t sysfs none /mnt/sys
 mount -t devtmpfs none /mnt/dev
 
-export PYTHONPATH=/usr/lib64/python2.7/site-packages
+# Make sure to set the date to something kind of reasonable -- this
+# appears necessary in order to make the boot process kind of work...
+busybox date 012200002015
 
-chroot /mnt /init
+exec busybox switch_root /mnt /sbin/init
+#chroot /mnt /init
 
 sync
 halt -f
