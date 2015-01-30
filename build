@@ -116,15 +116,18 @@ git clone $RISCV_LINUX $tempdir/linux -b qemu
 curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
 
 # Start with the default QEMU configuration
-make -C $tempdir/linux ARCH=riscv qemu_defconfig
+make -C $tempdir/linux ARCH=riscv64 qemu_defconfig
 
 # Patch the QEMU config to have some extra stuff that's needed for
 # Gentoo to boot.
 cat patches/linux/config | ./scripts/sed_vars >> $tempdir/linux/.config
-make -C $tempdir/linux ARCH=riscv olddefconfig
+make -C $tempdir/linux ARCH=riscv64 olddefconfig
+
+# Apply some extra Linux patches that aren't upstream yet
+patch -p1 -d $tempdir/linux < patches/linux/*.patch
 
 # Actually build Linux
-make -C $tempdir/linux ARCH=riscv -j8
+make -C $tempdir/linux ARCH=riscv64 -j8
 
 cp $tempdir/linux/vmlinux generated/vmlinux
 
