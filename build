@@ -115,6 +115,9 @@ cat rootfs-overlays/initramfs/initrd.conf | \
 git clone $RISCV_LINUX $tempdir/linux -b master
 curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
 
+# Apply some extra Linux patches that aren't upstream yet
+patch -p1 -d $tempdir/linux < patches/linux/*.patch
+
 # Start with the default QEMU configuration
 make -C $tempdir/linux ARCH=riscv64 qemu_defconfig
 
@@ -122,9 +125,6 @@ make -C $tempdir/linux ARCH=riscv64 qemu_defconfig
 # Gentoo to boot.
 cat patches/linux/config | ./scripts/sed_vars >> $tempdir/linux/.config
 make -C $tempdir/linux ARCH=riscv64 olddefconfig
-
-# Apply some extra Linux patches that aren't upstream yet
-patch -p1 -d $tempdir/linux < patches/linux/*.patch
 
 # Actually build Linux
 make -C $tempdir/linux ARCH=riscv64 -j8
