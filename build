@@ -41,10 +41,10 @@ chmod og+rX -R $tempdir/riscv
 # Builds a cross compiler,
 crossdev -t riscv64-unknown-linux-gnu \
     --ov-output /usr/local/portage/ \
-    --binutils ~2.25 --ov-binutils $tempdir/riscv \
-    --kernel ~3.14 --ov-kernel $tempdir/riscv \
-    --gcc ~4.9.2 --ov-gcc $tempdir/riscv \
-    --libc ~2.20 --ov-libc $tempdir/riscv
+    --binutils 2.25-r3 --ov-binutils $tempdir/riscv \
+    --kernel 3.14-r3 --ov-kernel $tempdir/riscv \
+    --gcc 5.1.0-r0 --ov-gcc $tempdir/riscv \
+    --libc 2.21-r0 --ov-libc $tempdir/riscv
 
 # Adds some stuff the the cross make.conf in order to actually allow
 # my code to build.
@@ -112,7 +112,7 @@ cat rootfs-overlays/initramfs/initrd.conf | \
 # Now that we've got the whole cross system up, it's time to go and
 # build a kernel and initrammfs that we can use to boot into Gentoo
 # and rebuild the stage3 manually.
-git clone $RISCV_LINUX $tempdir/linux -b master
+git clone $RISCV_LINUX $tempdir/linux -b new_privileged_isa
 curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
 
 # Apply some extra Linux patches that aren't upstream yet
