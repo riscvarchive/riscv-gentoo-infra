@@ -4,7 +4,7 @@
 RISCV_GENTOO="git://github.com/palmer-dabbelt/riscv-gentoo.git"
 
 RISCV_LINUX="git://github.com/ucb-bar/riscv-linux.git"
-LINUX_TARBALL="https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.14.15.tar.xz"
+LINUX_TARBALL="https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.14.29.tar.xz"
 
 set -ex
 
