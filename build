@@ -116,7 +116,10 @@ git clone $RISCV_LINUX $tempdir/linux -b new_privileged_isa
 curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
 
 # Apply some extra Linux patches that aren't upstream yet
-patch -p1 -d $tempdir/linux < patches/linux/*.patch
+find patches/linux/ -iname "*.patch" | while read patch
+do
+    patch -p1 -d $tempdir/linux < $patch
+done
 
 # Start with the default QEMU configuration
 make -C $tempdir/linux ARCH=riscv64 qemu_defconfig
