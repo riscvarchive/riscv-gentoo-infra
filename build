@@ -121,11 +121,10 @@ do
     patch -p1 -d $tempdir/linux < $patch
 done
 
-# Start with the default QEMU configuration
-make -C $tempdir/linux ARCH=riscv64 qemu_defconfig
-
-# Patch the QEMU config to have some extra stuff that's needed for
-# Gentoo to boot.
+# Obtain a Linux configuration, which I store as a diff from the
+# default configuration.
+mv $tempdir/linux/arch/riscv/defconfig $tempdir/linux/arch/riscv/configs/
+make -C $tempdir/linux ARCH=riscv64 defconfig
 cat patches/linux/config | ./scripts/sed_vars >> $tempdir/linux/.config
 make -C $tempdir/linux ARCH=riscv64 olddefconfig
 

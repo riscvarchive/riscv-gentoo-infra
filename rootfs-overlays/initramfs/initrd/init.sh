@@ -8,7 +8,7 @@ mount -t sysfs none /sys
 # Install all the busybox sym links
 /bin/busybox --install
 
-mount -t ext4 /dev/sda /mnt/ || /bin/busybox ash
+mount -t ext4 /dev/htifblk0 /mnt/ || /bin/busybox ash
 
 # If it works then go ahead and try to enter the new root
 mkdir -p /mnt/proc
@@ -22,8 +22,7 @@ mount -t devtmpfs none /mnt/dev
 # appears necessary in order to make the boot process kind of work...
 busybox date 012200002015
 
-exec busybox switch_root /mnt /sbin/init
-#chroot /mnt /init
+exec busybox switch_root /mnt /sbin/init || /bin/busybox ash
 
 sync
 halt -f
