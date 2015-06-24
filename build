@@ -41,10 +41,10 @@ chmod og+rX -R $tempdir/riscv
 # Builds a cross compiler,
 crossdev -t riscv64-unknown-linux-gnu \
     --ov-output /usr/local/portage/ \
-    --binutils 2.25-r3 --ov-binutils $tempdir/riscv \
-    --kernel 3.14-r3 --ov-kernel $tempdir/riscv \
-    --gcc 5.1.0-r0 --ov-gcc $tempdir/riscv \
-    --libc 2.21-r0 --ov-libc $tempdir/riscv
+    --binutils 2.25-r20150618 --ov-binutils $tempdir/riscv \
+    --kernel 3.14-r20150603 --ov-kernel $tempdir/riscv \
+    --gcc 5.1.0-r20150618 --ov-gcc $tempdir/riscv \
+    --libc 2.21-r20150618 --ov-libc $tempdir/riscv
 
 # Adds some stuff the the cross make.conf in order to actually allow
 # my code to build.
