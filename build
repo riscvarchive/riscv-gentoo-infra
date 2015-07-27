@@ -67,7 +67,7 @@ riscv64-unknown-linux-gnu-emerge -vu @system
 
 # Generates a temporary disk image used for building a native RISC-V
 # stage3.
-dd if=/dev/zero of=generated/scratch.img bs=1M count=1 seek=40960
+fallocate -l 40G generated/scratch.img
 /sbin/mkfs.ext4 -F generated/scratch.img
 
 mkdir $tempdir/scratch
