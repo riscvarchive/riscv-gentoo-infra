@@ -59,6 +59,8 @@ EOF
 rm /usr/riscv64-unknown-linux-gnu/etc/portage/make.profile
 ln -s $tempdir/riscv/profiles/default/linux/riscv \
    /usr/riscv64-unknown-linux-gnu/etc/portage/make.profile
+cp -r /etc/portage/repos.conf /usr/riscv64-unknown-linux-gnu/etc/portage
+rm -rf /usr/riscv64-unknown-linux-gnu/etc/portage/riscv
 
 # Build a "cross stage3", which isn't actually a proper stage3 but
 # does have roughly enough stuff to bring up portage on the RISC-V
