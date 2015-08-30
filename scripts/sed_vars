@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "$tempdir" == "" ]]
+then
+    echo 'No $tempdir'
+    exit 1
+fi
+
 # Produces on stdout a new version of stdin with @@TOP@@ replaced with
 # `pwd`.
 cat | \
