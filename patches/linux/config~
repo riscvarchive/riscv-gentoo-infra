@@ -10,6 +10,11 @@ CONFIG_FSNOTIFY=y
 CONFIG_DNOTIFY=y
 CONFIG_INOTIFY_USER=y
 
+<<<<<<< HEAD
+# I boot from ext4
+CONFIG_EXT4_FS=y
+=======
 # My default root filesystem
 CONFIG_EXT2_FS=n
 CONFIG_EXT4_FS=y
+>>>>>>> I need EXT4 on the guest Linux kernel
