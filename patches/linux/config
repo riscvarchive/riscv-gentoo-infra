@@ -10,6 +10,9 @@ CONFIG_FSNOTIFY=y
 CONFIG_DNOTIFY=y
 CONFIG_INOTIFY_USER=y
 
+# portage will die without file locking
+CONFIG_FILE_LOCKING=y
+
 # My default root filesystem
 CONFIG_EXT2_FS=n
 CONFIG_EXT4_FS=y
