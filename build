@@ -54,6 +54,7 @@ PORTAGE_TEMPDIR="/var/tmp/riscv64-unknown-linux-gnu-portage/"
 PYTHON_TARGETS="python2_7"
 MAKEOPTS="-j8"
 EOF
+cp -r /etc/portage/repos.conf /usr/riscv64-unknown-linux-gnu/etc/portage/
 
 # Set up the profile to point into this new cross toolchain
 rm /usr/riscv64-unknown-linux-gnu/etc/portage/make.profile
