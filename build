@@ -3,7 +3,7 @@
 # Here are some configuration variables
 RISCV_GENTOO="git://github.com/palmer-dabbelt/riscv-gentoo.git"
 
-RISCV_LINUX="git://github.com/palmer-dabbelt/riscv-linux.git"
+RISCV_LINUX="git://github.com/riscv/riscv-linux.git"
 LINUX_TARBALL="https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.14.29.tar.xz"
 
 set -ex
@@ -119,7 +119,7 @@ cat rootfs-overlays/initramfs/initrd.conf | \
 # Now that we've got the whole cross system up, it's time to go and
 # build a kernel and initrammfs that we can use to boot into Gentoo
 # and rebuild the stage3 manually.
-git clone $RISCV_LINUX $tempdir/linux -b defconfig2
+git clone $RISCV_LINUX $tempdir/linux
 curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
 
 # Apply some extra Linux patches that aren't upstream yet
