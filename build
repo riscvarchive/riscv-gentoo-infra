@@ -138,5 +138,3 @@ make -C $tempdir/linux ARCH=riscv64 olddefconfig
 make -C $tempdir/linux ARCH=riscv64 -j8
 
 cp $tempdir/linux/vmlinux generated/vmlinux
-
-# 
