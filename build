@@ -69,7 +69,7 @@ rm -rf /usr/riscv64-unknown-linux-gnu/etc/portage/riscv
 riscv64-unknown-linux-gnu-emerge -vu @system
 
 # More tools are required for the image to be build
-USE="static" riscv64-unknown-linux-gnu-emerge -vu busybox
+USE="static" riscv64-unknown-linux-gnu-emerge -v1 busybox
 riscv64-unknown-linux-gnu-emerge -vu riscv-pk
 
 # Generates a temporary disk image used for building a native RISC-V
