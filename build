@@ -42,7 +42,7 @@ chmod og+rX -R $tempdir/riscv
 crossdev -t riscv64-unknown-linux-gnu \
     --ov-output /usr/local/portage/ \
     --binutils 2.25.1-r20160104 --ov-binutils $tempdir/riscv \
-    --kernel 3.14-r20150715 --ov-kernel $tempdir/riscv \
+    --kernel 4.1-r20160112 --ov-kernel $tempdir/riscv \
     --gcc 5.3.0-r20160104 --ov-gcc $tempdir/riscv \
     --libc 2.22-r20160104 --ov-libc $tempdir/riscv
 
@@ -119,8 +119,7 @@ cat rootfs-overlays/initramfs/initrd.conf | \
 # Now that we've got the whole cross system up, it's time to go and
 # build a kernel and initrammfs that we can use to boot into Gentoo
 # and rebuild the stage3 manually.
-git clone $RISCV_LINUX $tempdir/linux
-curl $LINUX_TARBALL | tar -xJ -C $tempdir/linux --strip-components=1
+git clone $RISCV_LINUX $tempdir/linux -b linux-4.1.y-riscv
 
 # Apply some extra Linux patches that aren't upstream yet
 find patches/linux/ -iname "*.patch" | while read patch
