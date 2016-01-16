@@ -10,4 +10,5 @@ fi
 # `pwd`.
 cat | \
     sed s!@@TOP@@!`pwd`!g | \
+    set s!@@DATE_TO_SET@@!$(date +%m%d%H%M%Y)! | \
     sed s!@@TEMPDIR@@!$tempdir!g

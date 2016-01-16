@@ -20,7 +20,7 @@ mount -t devtmpfs none /mnt/dev
 
 # Make sure to set the date to something kind of reasonable -- this
 # appears necessary in order to make the boot process kind of work...
-busybox date 012200002015
+busybox date @@DATE_TO_SET@@
 
 exec busybox switch_root /mnt /sbin/init || /bin/busybox ash
 

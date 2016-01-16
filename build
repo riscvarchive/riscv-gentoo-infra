@@ -113,8 +113,14 @@ trap "" EXIT
 # Demonstrate to Linux how we're going to be building the initramfs,
 # which really just consists of sticking an absolute path in there
 # somewhere...
+mkdir -p $tempdir/initramfs/initrd
+
 cat rootfs-overlays/initramfs/initrd.conf | \
-    ./scripts/sed_vars > $tempdir/initrd.conf
+    ./scripts/sed_vars > $tempdir/initramfs/initrd.conf
+
+# Some initramfs files need to be modified
+cat rootfs-overlays/initramfs/initrd/init.sh | \
+    ./scripts/sed_vars > $tempdir/initramfs/initrd/init.sh
 
 # Now that we've got the whole cross system up, it's time to go and
 # build a kernel and initrammfs that we can use to boot into Gentoo
