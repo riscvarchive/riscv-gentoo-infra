@@ -1,6 +1,6 @@
 # Enables a special initrd that 
 CONFIG_BLK_DEV_INITRD=y
-CONFIG_INITRAMFS_SOURCE="@@TEMPDIR@@/initrd.conf"
+CONFIG_INITRAMFS_SOURCE="@@TEMPDIR@@/initramfs/initrd.conf"
 
 # sysfs is needed for Gentoo
 CONFIG_SYSFS=y
