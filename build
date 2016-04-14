@@ -19,7 +19,7 @@ fi
 
 # Cleans out the existing crossdev toolchain
 yes | crossdev -C riscv64-unknown-linux-gnu
-rm -rf /usr/local/portage/cross-riscv64-unknown-linux-gnu/
+rm -rf /usr/portage/local/cross-riscv64-unknown-linux-gnu/
 
 # Cleans out the existing set of generated files
 rm -rf generated
@@ -40,7 +40,7 @@ chmod og+rX -R $tempdir/riscv
 
 # Builds a cross compiler,
 crossdev -t riscv64-unknown-linux-gnu \
-    --ov-output /usr/local/portage/ \
+    --ov-output /usr/portage/local \
     --binutils 2.25.1-r20160104 --ov-binutils $tempdir/riscv \
     --kernel 4.1-r20160112 --ov-kernel $tempdir/riscv \
     --gcc 5.3.0-r20160104 --ov-gcc $tempdir/riscv \
@@ -89,8 +89,8 @@ tar -C /usr/riscv64-unknown-linux-gnu -c . | tar -C $tempdir/scratch -xv
 # and start building things when we end up in the native QEMU boot
 tar -C / -c /usr/portage | tar -C $tempdir/scratch -xv
 
-mkdir -p $tempdir/scratch/usr/local/portage
-tar -C $tempdir/riscv -c . | tar -C $tempdir/scratch/usr/local/portage -xv
+mkdir -p $tempdir/scratch/usr/portage/local
+tar -C $tempdir/riscv -c . | tar -C $tempdir/scratch/usr/portage/local -xv
 
 # Since we've been coping a whole bunch of stuff from the local
 # machine, we need to go ahead and make sure all the group information
