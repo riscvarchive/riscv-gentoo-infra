@@ -17,6 +17,13 @@ then
     exit 1
 fi
 
+# GCC fails to cross compile when systemtap is installed
+if [[ "$(equery list systemtap | wc -l)" != "0" ]]
+then
+    echo "systemtap is installed"
+    exit 1
+fi
+
 # Cleans out the existing crossdev toolchain
 yes | crossdev -C riscv64-unknown-linux-gnu
 rm -rf /usr/portage/local/cross-riscv64-unknown-linux-gnu/
